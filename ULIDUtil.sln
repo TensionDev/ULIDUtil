@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35222.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ULIDUtil", "ULIDUtil\ULIDUtil.csproj", "{97FFCEA8-F181-4034-8D96-8510BC3D7729}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{97FFCEA8-F181-4034-8D96-8510BC3D7729}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97FFCEA8-F181-4034-8D96-8510BC3D7729}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97FFCEA8-F181-4034-8D96-8510BC3D7729}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97FFCEA8-F181-4034-8D96-8510BC3D7729}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E83F4682-98D7-411C-B26A-917AB7B06333}
+	EndGlobalSection
+EndGlobal
