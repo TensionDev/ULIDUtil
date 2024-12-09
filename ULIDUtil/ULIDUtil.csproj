@@ -2,6 +2,34 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>TensionDev.ULID</AssemblyName>
+    <RootNamespace>TensionDev.ULID</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageId>TensionDev.ULID</PackageId>
+	<Version>0.1.0-alpha</Version>
+    <Authors>TensionDev amsga</Authors>
+    <Company>TensionDev</Company>
+    <Product>TensionDev.ULID</Product>
+    <Description>A project to store various ULID functions within a library for future use.</Description>
+    <Copyright>Copyright (c) TensionDev 2021</Copyright>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/TensionDev/ULIDUtil</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/TensionDev/ULIDUtil</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>ULID</PackageTags>
+    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+    <NeutralLanguage>en-SG</NeutralLanguage>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
