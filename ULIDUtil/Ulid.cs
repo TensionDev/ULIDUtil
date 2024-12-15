@@ -21,6 +21,7 @@ namespace TensionDev.ULID
 {
     public sealed class Ulid : IComparable<Ulid>, IEquatable<Ulid>
     {
+        private const string INVALID_FORMAT_STRING = "The format of s is invalid";
         private readonly uint _time_high;
         private readonly ushort _time_low;
         private readonly ushort _random_high;
@@ -78,22 +79,27 @@ namespace TensionDev.ULID
             _random_low = BitConverter.ToUInt32(random_low, 0);
         }
 
-
+        /// <summary>
+        /// Initializes a new instance of the Ulid object by using the value represented by the specified string.
+        /// </summary>
+        /// <param name="s">A string that contains a Ulid</param>
+        /// <exception cref="System.ArgumentNullException">s is null</exception>
+        /// <exception cref="System.FormatException">The format of s is invalid</exception>
         public Ulid(string s) : this()
         {
             if (s == null)
                 throw new ArgumentNullException(nameof(s));
 
             if (String.IsNullOrEmpty(s))
-                throw new FormatException("The format of s is invalid");
+                throw new FormatException(INVALID_FORMAT_STRING);
 
             if (s.Length != 26)
-                throw new FormatException("The format of s is invalid");
+                throw new FormatException(INVALID_FORMAT_STRING);
 
             string vs = s.ToUpper().Replace("O", "0").Replace("I", "1").Replace("L", "1");
 
             if (vs.Contains("U"))
-                throw new FormatException("The format of s is invalid");
+                throw new FormatException(INVALID_FORMAT_STRING);
 
             const Int32 baseLength = 5;
 
@@ -469,7 +475,7 @@ namespace TensionDev.ULID
             else if (c >= 'V' && c <= 'Z')
                 value = (UInt64)c - 59;
             else
-                throw new FormatException("The format of s is invalid");
+                throw new FormatException(INVALID_FORMAT_STRING);
 
             return value;
         }
