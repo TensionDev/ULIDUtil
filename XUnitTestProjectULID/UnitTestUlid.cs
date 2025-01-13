@@ -7,7 +7,7 @@ namespace XUnitTestProjectULID
         [Fact]
         public void TestConstructorNullByteArray()
         {
-            byte[] vs = null;
+            byte[]? vs = null;
             ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => { TensionDev.ULID.Ulid ulid = new TensionDev.ULID.Ulid(vs); });
         }
 
@@ -29,7 +29,35 @@ namespace XUnitTestProjectULID
         }
 
         [Fact]
-        public void TestTryParse()
+        public void TestConstructorNullString()
+        {
+            string? vs = null;
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => { TensionDev.ULID.Ulid ulid = new TensionDev.ULID.Ulid(vs); });
+        }
+
+        [Fact]
+        public void TestConstructorEmptyString()
+        {
+            string vs = string.Empty;
+            FormatException ex = Assert.Throws<FormatException>(() => { TensionDev.ULID.Ulid ulid = new TensionDev.ULID.Ulid(vs); });
+        }
+
+        [Fact]
+        public void TestConstructorInvalidSizeString()
+        {
+            string vs = "0123456789";
+            FormatException ex = Assert.Throws<FormatException>(() => { TensionDev.ULID.Ulid ulid = new TensionDev.ULID.Ulid(vs); });
+        }
+
+        [Fact]
+        public void TestConstructorInvalidCharacterString()
+        {
+            string vs = "01ARZ3NDEKTSU4RRFFQ69G5FAV";
+            FormatException  ex = Assert.Throws<FormatException>(() => { TensionDev.ULID.Ulid ulid = new TensionDev.ULID.Ulid(vs); });
+        }
+
+        [Fact]
+        public void TestTryParseValid()
         {
             string expectedULID = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
 
@@ -38,6 +66,14 @@ namespace XUnitTestProjectULID
             Assert.True(result);
         }
 
+        [Fact]
+        public void TestTryParseInalid()
+        {
+            string expectedULID = "01ARZ3NDEKTSU4RRFFQ69G5FAV";
+
+            bool result = TensionDev.ULID.Ulid.TryParse(expectedULID, out TensionDev.ULID.Ulid _);
+            Assert.False(result);
+        }
 
         [Fact]
         public void TestCompareToObject()
@@ -46,6 +82,18 @@ namespace XUnitTestProjectULID
             object other = new object();
             string vs = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
             TensionDev.ULID.Ulid ulid = TensionDev.ULID.Ulid.Parse(vs);
+
+            int actualResult = ulid.CompareTo(other);
+            Assert.Equal(expectedResult, actualResult);
+        }
+
+        [Fact]
+        public void TestCompareToObjectUlid()
+        {
+            int expectedResult = 0;
+            string vs = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            TensionDev.ULID.Ulid ulid = TensionDev.ULID.Ulid.Parse(vs);
+            object other = TensionDev.ULID.Ulid.Parse(vs);
 
             int actualResult = ulid.CompareTo(other);
             Assert.Equal(expectedResult, actualResult);
@@ -61,6 +109,40 @@ namespace XUnitTestProjectULID
 
             int actualResult = ulid1.CompareTo(ulid2);
             Assert.Equal(expectedResult, actualResult);
+        }
+
+        [Fact]
+        public void TestCompareToNull()
+        {
+            int expectedResult = 1;
+            string vs = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            TensionDev.ULID.Ulid ulid1 = TensionDev.ULID.Ulid.Parse(vs);
+            TensionDev.ULID.Ulid? ulid2 = null;
+
+            int actualResult = ulid1.CompareTo(ulid2);
+            Assert.Equal(expectedResult, actualResult);
+        }
+
+        [Fact]
+        public void TestEqualsNull()
+        {
+            string vs = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            TensionDev.ULID.Ulid ulid = TensionDev.ULID.Ulid.Parse(vs);
+            TensionDev.ULID.Ulid? ulid2 = null;
+
+            bool actualResult = ulid.Equals(ulid2);
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestEqualsObjectUlid()
+        {
+            string vs = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            TensionDev.ULID.Ulid ulid = TensionDev.ULID.Ulid.Parse(vs);
+            object other = TensionDev.ULID.Ulid.Parse(vs);
+
+            bool actualResult = ulid.Equals(other);
+            Assert.True(actualResult);
         }
 
         [Fact]
@@ -136,6 +218,14 @@ namespace XUnitTestProjectULID
 
             Guid actual = ulid.ToGuid();
             Assert.Equal(expected.ToString(), actual.ToString());
+        }
+
+        [Fact]
+        public void TestToCrockfordBase32ArgumentException()
+        {
+            ulong value = 32;
+
+            ArgumentException ex = Assert.Throws<ArgumentException>(() => { Char actual = TensionDev.ULID.Ulid.ToCrockfordBase32(value); });
         }
 
         [Fact]
@@ -456,6 +546,14 @@ namespace XUnitTestProjectULID
 
             Char actual = TensionDev.ULID.Ulid.ToCrockfordBase32(value);
             Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TestFromCrockfordBase32ArgumentException()
+        {
+            Char value = 'U';
+
+            FormatException ex = Assert.Throws<FormatException>(() => { ulong actual = TensionDev.ULID.Ulid.FromCrockfordBase32(value); });
         }
 
         [Fact]
