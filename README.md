@@ -6,4 +6,4 @@
 
 A project to store ULID functions within a library for future use.  
 This project references the following documents for implementation.  
-- [ulid/spec: The canonical spec for ulid](https://https://github.com/ulid/spec)
+- [ulid/spec: The canonical spec for ulid](https://github.com/ulid/spec)

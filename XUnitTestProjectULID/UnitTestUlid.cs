@@ -168,6 +168,18 @@ namespace XUnitTestProjectULID
         }
 
         [Fact]
+        public void TestGetHashCodeTwoInstance()
+        {
+            string vs = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            TensionDev.ULID.Ulid ulid1 = TensionDev.ULID.Ulid.Parse(vs);
+            TensionDev.ULID.Ulid ulid2 = TensionDev.ULID.Ulid.Parse(vs);
+
+            int hashcode1 = ulid1.GetHashCode();
+            int hashcode2 = ulid2.GetHashCode();
+            Assert.Equal(hashcode1, hashcode2);
+        }
+
+        [Fact]
         public void TestToByteArray1()
         {
             byte[] expected = new byte[] { 0x00, 0x55, 0x8f, 0x8e, 0xad, 0x74, 0xf5, 0x9d, 0x93, 0x18, 0x7b, 0xee, 0x64, 0xc0, 0xaf, 0x56 };
@@ -218,6 +230,162 @@ namespace XUnitTestProjectULID
 
             Guid actual = ulid.ToGuid();
             Assert.Equal(expected.ToString(), actual.ToString());
+        }
+
+        [Fact]
+        public void TestOperatorEqualsBothNull()
+        {
+            TensionDev.ULID.Ulid? ulid = null;
+            TensionDev.ULID.Ulid? ulid2 = null;
+
+            bool actualResult = ulid == ulid2;
+            Assert.True(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorEqualsNull1()
+        {
+            string vs = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            TensionDev.ULID.Ulid ulid = TensionDev.ULID.Ulid.Parse(vs);
+            TensionDev.ULID.Ulid? ulid2 = null;
+
+            bool actualResult = ulid == ulid2;
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorEqualsNull2()
+        {
+            string vs = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            TensionDev.ULID.Ulid? ulid = null;
+            TensionDev.ULID.Ulid ulid2 = TensionDev.ULID.Ulid.Parse(vs);
+
+            bool actualResult = ulid == ulid2;
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorEqualsTwoInstance()
+        {
+            string vs = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            TensionDev.ULID.Ulid ulid1 = TensionDev.ULID.Ulid.Parse(vs);
+            TensionDev.ULID.Ulid ulid2 = TensionDev.ULID.Ulid.Parse(vs);
+
+            bool actualResult = ulid1 == ulid2;
+            Assert.True(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorNotEqualsBothNull()
+        {
+            TensionDev.ULID.Ulid? ulid = null;
+            TensionDev.ULID.Ulid? ulid2 = null;
+
+            bool actualResult = ulid != ulid2;
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorNotEqualsNull1()
+        {
+            string vs = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            TensionDev.ULID.Ulid ulid = TensionDev.ULID.Ulid.Parse(vs);
+            TensionDev.ULID.Ulid? ulid2 = null;
+
+            bool actualResult = ulid != ulid2;
+            Assert.True(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorNotEqualsNull2()
+        {
+            string vs = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            TensionDev.ULID.Ulid? ulid = null;
+            TensionDev.ULID.Ulid ulid2 = TensionDev.ULID.Ulid.Parse(vs);
+
+            bool actualResult = ulid != ulid2;
+            Assert.True(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorNotEqualsTwoInstance()
+        {
+            string vs = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            TensionDev.ULID.Ulid ulid1 = TensionDev.ULID.Ulid.Parse(vs);
+            TensionDev.ULID.Ulid ulid2 = TensionDev.ULID.Ulid.Parse(vs);
+
+            bool actualResult = ulid1 != ulid2;
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorLessThanTwoInstance()
+        {
+            string vs = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            TensionDev.ULID.Ulid ulid1 = TensionDev.ULID.Ulid.Parse(vs);
+            TensionDev.ULID.Ulid ulid2 = TensionDev.ULID.Ulid.Parse(vs);
+
+            bool actualResult = ulid1 < ulid2;
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorLessThanSmallerInstance()
+        {
+            string vs1 = "01ARZ3NDEKSSV4RRFFQ69G5FAV";
+            string vs2 = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            TensionDev.ULID.Ulid ulid1 = TensionDev.ULID.Ulid.Parse(vs1);
+            TensionDev.ULID.Ulid ulid2 = TensionDev.ULID.Ulid.Parse(vs2);
+
+            bool actualResult = ulid1 < ulid2;
+            Assert.True(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorLessThanLargerInstance()
+        {
+            string vs1 = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            string vs2 = "01ARZ3NDEKSSV4RRFFQ69G5FAV";
+            TensionDev.ULID.Ulid ulid1 = TensionDev.ULID.Ulid.Parse(vs1);
+            TensionDev.ULID.Ulid ulid2 = TensionDev.ULID.Ulid.Parse(vs2);
+
+            bool actualResult = ulid1 < ulid2;
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorGreaterThanTwoInstance()
+        {
+            string vs = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            TensionDev.ULID.Ulid ulid1 = TensionDev.ULID.Ulid.Parse(vs);
+            TensionDev.ULID.Ulid ulid2 = TensionDev.ULID.Ulid.Parse(vs);
+
+            bool actualResult = ulid1 > ulid2;
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorGreaterThanSmallerInstance()
+        {
+            string vs1 = "01ARZ3NDEKSSV4RRFFQ69G5FAV";
+            string vs2 = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            TensionDev.ULID.Ulid ulid1 = TensionDev.ULID.Ulid.Parse(vs1);
+            TensionDev.ULID.Ulid ulid2 = TensionDev.ULID.Ulid.Parse(vs2);
+
+            bool actualResult = ulid1 > ulid2;
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorGreaterThanLargerInstance()
+        {
+            string vs1 = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            string vs2 = "01ARZ3NDEKSSV4RRFFQ69G5FAV";
+            TensionDev.ULID.Ulid ulid1 = TensionDev.ULID.Ulid.Parse(vs1);
+            TensionDev.ULID.Ulid ulid2 = TensionDev.ULID.Ulid.Parse(vs2);
+
+            bool actualResult = ulid1 > ulid2;
+            Assert.True(actualResult);
         }
 
         [Fact]

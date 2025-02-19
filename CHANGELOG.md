@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.1] - 2024-06-05
+[v0.1.1](https://github.com/TensionDev/ULIDUtil/releases/tag/v0.1.1)
+
+### Changed
+- Changed Exception thrown message to a standardised string.
+
+
+## [v0.1.0-alpha] - 2024-12-09
+[v0.1.0-alpha](https://github.com/TensionDev/ULIDUtil/releases/tag/v0.1.0-alpha)
+
 ### Added
 - Added ULID generated based on current system date and time.
 
