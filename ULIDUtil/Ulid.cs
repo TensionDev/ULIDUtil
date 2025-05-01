@@ -15,12 +15,18 @@
 //   limitations under the License.
 
 using System;
+using System.Reflection;
 using System.Text;
 
 namespace TensionDev.ULID
 {
+    /// <summary>
+    /// Represents a Universally Unique Lexicographically Sortable Identifier (ULID).
+    /// </summary>
     public sealed class Ulid : IComparable<Ulid>, IEquatable<Ulid>
     {
+        private static readonly DateTime s_epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
         private const string INVALID_FORMAT_STRING = "The format of s is invalid";
         private readonly uint _time_high;
         private readonly ushort _time_low;
@@ -28,6 +34,14 @@ namespace TensionDev.ULID
         private readonly uint _random_mid;
         private readonly uint _random_low;
 
+        /// <summary>
+        /// A read-only instance of the Ulid object whose value is all ones.
+        /// </summary>
+        public static readonly Ulid Max = new Ulid(new byte[] { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff });
+
+        /// <summary>
+        /// Initializes a new instance of the Ulid object whose value is all zeros.
+        /// </summary>
         public Ulid()
         {
             _time_high = 0;
@@ -35,6 +49,56 @@ namespace TensionDev.ULID
             _random_high = 0;
             _random_mid = 0;
             _random_low = 0;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the Ulid object by using the specified timestamp.
+        /// </summary>
+        /// <param name="timestamp">Given Timestamp.</param>
+        public Ulid(DateTime timestamp)
+        {
+            TimeSpan timeSince = timestamp.ToUniversalTime() - s_epoch.ToUniversalTime();
+            Int64 timeInterval = ((Int64)timeSince.TotalMilliseconds);
+
+            Byte[] time = BitConverter.GetBytes(timeInterval);
+
+            byte[] time_high = new byte[4];
+            byte[] time_low = new byte[2];
+            byte[] random_high = new byte[2];
+            byte[] random_mid = new byte[4];
+            byte[] random_low = new byte[4];
+
+            time_high[0] = time[0];
+            time_high[1] = time[1];
+            time_high[2] = time[2];
+            time_high[3] = time[3];
+
+            time_low[0] = time[4];
+            time_low[1] = time[5];
+
+            if (BitConverter.IsLittleEndian)
+            {
+                time_high[0] = time[2];
+                time_high[1] = time[3];
+                time_high[2] = time[4];
+                time_high[3] = time[5];
+
+                time_low[0] = time[0];
+                time_low[1] = time[1];
+            }
+
+            using (System.Security.Cryptography.RNGCryptoServiceProvider cryptoServiceProvider = new System.Security.Cryptography.RNGCryptoServiceProvider())
+            {
+                cryptoServiceProvider.GetBytes(random_high);
+                cryptoServiceProvider.GetBytes(random_mid);
+                cryptoServiceProvider.GetBytes(random_low);
+            }
+
+            _time_high = BitConverter.ToUInt32(time_high, 0);
+            _time_low = BitConverter.ToUInt16(time_low, 0);
+            _random_high = BitConverter.ToUInt16(random_high, 0);
+            _random_mid = BitConverter.ToUInt32(random_mid, 0);
+            _random_low = BitConverter.ToUInt32(random_low, 0);
         }
 
         /// <summary>
@@ -107,22 +171,36 @@ namespace TensionDev.ULID
             UInt32 length = 0;
 
             Byte[] b = new Byte[16];
-            for (Int32 i = 0; i < vs.Length; ++i)
+
+            Char c = vs[0];
+            UInt64 value = FromCrockfordBase32(c);
+            bitStream <<= baseLength;
+            bitStream += value;
+
+            c = vs[1];
+            value = FromCrockfordBase32(c);
+            bitStream <<= baseLength;
+            bitStream += value;
+            Byte[] bytes = BitConverter.GetBytes((long)(bitStream));
+            b[0] = bytes[0];
+            bitStream = 0;
+
+            for (Int32 i = 2; i < vs.Length; ++i)
             {
-                Char c = vs[i];
-                UInt64 value = FromCrockfordBase32(c);
+                c = vs[i];
+                value = FromCrockfordBase32(c);
 
                 bitStream <<= baseLength;
                 bitStream += value;
 
                 length += baseLength;
-                if (length == 40 || i == vs.Length - 1)
+                if (length == 40)
                 {
-                    int index = (i / 8) * 5;
+                    int index = (i / 8) * 5 - 4;
 
-                    Byte[] bytes = BitConverter.GetBytes((long)bitStream);
+                    bytes = BitConverter.GetBytes((long)bitStream);
 
-                    if (index < 15)
+                    if (index < 12)
                     {
                         b[index + 0] = bytes[4];
                         b[index + 1] = bytes[3];
@@ -132,8 +210,10 @@ namespace TensionDev.ULID
                     }
                     else
                     {
-                        bytes = BitConverter.GetBytes((long)(bitStream >> 2));
-                        b[index] = bytes[0];
+                        b[index + 0] = bytes[4];
+                        b[index + 1] = bytes[3];
+                        b[index + 2] = bytes[2];
+                        b[index + 3] = bytes[1];
                     }
 
                     length = 0;
@@ -172,6 +252,15 @@ namespace TensionDev.ULID
         /// <summary>
         /// Initializes a new instance of the Ulid object.
         /// </summary>
+        /// <returns>A new Ulid object.</returns>
+        public static Ulid NewUlid()
+        {
+            return new Ulid(DateTime.UtcNow);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the Ulid object.
+        /// </summary>
         /// <param name="input">A universally unique lexicographically sortable identifier in the proper format.</param>
         /// <returns>A new Ulid object.</returns>
         public static Ulid Parse(string input)
@@ -204,6 +293,11 @@ namespace TensionDev.ULID
             return vs;
         }
 
+        /// <summary>
+        /// Compares the current instance with another object and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+        /// </summary>
+        /// <param name="other">An object to compare with this instance.</param>
+        /// <returns>A value that indicates the relative order of the objects being compared.</returns>
         public int CompareTo(object other)
         {
             if (other is Ulid u)
@@ -216,6 +310,11 @@ namespace TensionDev.ULID
             }
         }
 
+        /// <summary>
+        /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+        /// </summary>
+        /// <param name="other">An ULID to compare with this instance.</param>
+        /// <returns>A value that indicates the relative order of the objects being compared.</returns>
         public int CompareTo(Ulid other)
         {
             if (other is null)
@@ -306,8 +405,8 @@ namespace TensionDev.ULID
             StringBuilder sb = new StringBuilder();
 
             ulong vs = _time_high;
-            var remainder = vs % 4;
-            vs >>= 2;
+            var remainder = vs % 16;
+            vs >>= 4;
             for (int i = 0; i < 6; ++i)
             {
                 var value = vs % 32;
@@ -323,9 +422,9 @@ namespace TensionDev.ULID
             vs += _time_low;
             vs <<= 16;
             vs += _random_high;
-            remainder = vs % 16;
-            vs >>= 4;
-            for (int i = 0; i < 6; ++i)
+            remainder = vs % 2;
+            vs >>= 1;
+            for (int i = 0; i < 7; ++i)
             {
                 var value = vs % 32;
                 vs >>= 5;
@@ -338,23 +437,21 @@ namespace TensionDev.ULID
             vs = remainder;
             vs <<= 32;
             vs += _random_mid;
-            remainder = vs % 2;
-            vs >>= 1;
-            for (int i = 0; i < 7; ++i)
+            remainder = vs % 8;
+            vs >>= 3;
+            for (int i = 0; i < 6; ++i)
             {
                 var value = vs % 32;
                 vs >>= 5;
 
                 Char c = ToCrockfordBase32(value);
 
-                sb.Insert(12, c);
+                sb.Insert(13, c);
             }
 
             vs = remainder;
             vs <<= 32;
             vs += _random_low;
-            vs <<= 2;
-            vs += 3;
             for (int i = 0; i < 7; ++i)
             {
                 var value = vs % 32;
@@ -368,14 +465,46 @@ namespace TensionDev.ULID
             return sb.ToString().ToUpper();
         }
 
+        /// <summary>
+        /// Returns the System.Guid equivalent of this instance.
+        /// </summary>
+        /// <returns>A System.Guid object.</returns>
         public Guid ToGuid()
         {
             // System.Guid is Mixed Endian
             var array = ToByteArray();
-            Array.Reverse(array,0, 4);
+            Array.Reverse(array, 0, 4);
             Array.Reverse(array, 4, 2);
             Array.Reverse(array, 6, 2);
             return new Guid(array);
+        }
+
+        /// <summary>
+        /// Returns the approximate DateTime used to generate the Ulid.
+        /// </summary>
+        /// <returns>DateTime of the Ulid in UTC.</returns>
+        public DateTime ToDateTime()
+        {
+            Byte[] time = new Byte[8];
+
+            byte[] time_high = BitConverter.GetBytes(_time_high);
+            byte[] time_low = BitConverter.GetBytes(_time_low);
+
+            time_high.CopyTo(time, 2);
+            time_low.CopyTo(time, 6);
+
+            if (BitConverter.IsLittleEndian)
+            {
+                time_high.CopyTo(time, 2);
+                time_low.CopyTo(time, 0);
+                time[6] = 0;
+                time[7] = 0;
+            }
+
+            Int64 timeInterval = BitConverter.ToInt64(time, 0);
+            TimeSpan timeSpan = TimeSpan.FromMilliseconds(timeInterval);
+
+            return s_epoch.ToUniversalTime() + timeSpan;
         }
 
         /// <summary>
@@ -406,40 +535,82 @@ namespace TensionDev.ULID
             return !(a == b);
         }
 
+        /// <summary>
+        /// Indicates whether the values of the first Ulid object is strictly less than the other.
+        /// </summary>
+        /// <param name="a">The first object to compare.</param>
+        /// <param name="b">The second object to compare.</param>
+        /// <returns>true if a is strictly less than b; otherwise, false.</returns>
         public static bool operator <(Ulid a, Ulid b)
         {
             return a.CompareTo(b) < 0;
         }
 
+        /// <summary>
+        /// Indicates whether the values of the first Ulid object is strictly greater than the other.
+        /// </summary>
+        /// <param name="a">The first object to compare.</param>
+        /// <param name="b">The second object to compare.</param>
+        /// <returns>true if a is strictly greater than b; otherwise, false.</returns>
         public static bool operator >(Ulid a, Ulid b)
         {
             return a.CompareTo(b) > 0;
         }
 
+        /// <summary>
+        /// Indicates whether the values of the first Ulid object is less than or equal to the other.
+        /// </summary>
+        /// <param name="a">The first object to compare.</param>
+        /// <param name="b">The second object to compare.</param>
+        /// <returns>true if a is less than or equal to b; otherwise, false.</returns>
         public static bool operator <=(Ulid a, Ulid b)
         {
             return a.CompareTo(b) <= 0;
         }
 
+        /// <summary>
+        /// Indicates whether the values of the first Ulid object is greater than or equal to the other.
+        /// </summary>
+        /// <param name="a">The first object to compare.</param>
+        /// <param name="b">The second object to compare.</param>
+        /// <returns>true if a is greater than or equal to b; otherwise, false.</returns>
         public static bool operator >=(Ulid a, Ulid b)
         {
             return a.CompareTo(b) >= 0;
         }
 
+        /// <summary>
+        /// Converts given numerical value to the corresponding Crockford Base32 Digit.
+        /// </summary>
+        /// <param name="value">Value range from 0 - 31.</param>
+        /// <returns>The corresponding Crockford Base32 Digit.</returns>
+        /// <exception cref="ArgumentException"></exception>
         public static Char ToCrockfordBase32(ulong value)
         {
             return ToCrockfordBase32((uint)(value));
         }
 
+        /// <summary>
+        /// Converts given numerical value to the corresponding Crockford Base32 Digit.
+        /// </summary>
+        /// <param name="value">Value range from 0 - 31.</param>
+        /// <returns>The corresponding Crockford Base32 Digit.</returns>
+        /// <exception cref="ArgumentException"></exception>
         public static Char ToCrockfordBase32(uint value)
         {
             return ToCrockfordBase32((ushort)(value));
         }
 
+        /// <summary>
+        /// Converts given numerical value to the corresponding Crockford Base32 Digit.
+        /// </summary>
+        /// <param name="value">Value range from 0 - 31.</param>
+        /// <returns>The corresponding Crockford Base32 Digit.</returns>
+        /// <exception cref="ArgumentException"></exception>
         public static Char ToCrockfordBase32(ushort value)
         {
             if (value > 31)
-                throw new ArgumentException("", nameof(value));
+                throw new ArgumentException("Value provided is greater than 31!", nameof(value));
 
             Char c = (Char)48;
             if (value < 10)
@@ -458,6 +629,12 @@ namespace TensionDev.ULID
             return c;
         }
 
+        /// <summary>
+        /// Converts given Crockford Base32 Digit into its numerical value.
+        /// </summary>
+        /// <param name="c">Crockford Base32 Digit.</param>
+        /// <returns>The corresponding numerical value.</returns>
+        /// <exception cref="FormatException"></exception>
         public static ulong FromCrockfordBase32(Char c)
         {
             ulong value;

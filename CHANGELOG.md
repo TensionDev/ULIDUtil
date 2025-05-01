@@ -8,7 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v0.1.1] - 2024-06-05
+
+## [v0.2.0] - 2025-05-01
+[v0.2.0](https://github.com/TensionDev/ULIDUtil/releases/tag/v0.2.0)
+
+### Added
+- Added DateTime Conversion from ULID.
+
+### Fixed
+- Fixed Date Time implementation.
+- Fixed ToString implementation.
+
+
+## [v0.1.1] - 2025-02-02 [YANKED]
 [v0.1.1](https://github.com/TensionDev/ULIDUtil/releases/tag/v0.1.1)
 
 ### Changed

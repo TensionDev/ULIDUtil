@@ -5,6 +5,27 @@ namespace XUnitTestProjectULID
     public class UnitTestUlid
     {
         [Fact]
+        public void TestUlidMax()
+        {
+            string expectedULID = "7ZZZZZZZZZZZZZZZZZZZZZZZZZ";
+
+            TensionDev.ULID.Ulid ulid = TensionDev.ULID.Ulid.Max;
+            Assert.Equal(expectedULID, ulid.ToString());
+        }
+
+        [Fact]
+        public void TestConstructorDateTime()
+        {
+            string expectedULID = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            DateTime dateTime = new DateTime(2016, 07, 30, 23, 54, 10, 259, DateTimeKind.Utc);
+
+            TensionDev.ULID.Ulid ulid = new TensionDev.ULID.Ulid(dateTime);
+
+            // First 10 characters are the timestamp, next 16 are random.
+            Assert.Equal(expectedULID.Substring(0, 10), ulid.ToString().Substring(0, 10));
+        }
+
+        [Fact]
         public void TestConstructorNullByteArray()
         {
             byte[]? vs = null;
@@ -22,7 +43,7 @@ namespace XUnitTestProjectULID
         public void TestConstructorByteArray()
         {
             string expectedULID = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
-            byte[] vs = new byte[] {0x00, 0x55, 0x8f, 0x8e, 0xad, 0x74, 0xf5, 0x9d, 0x93, 0x18, 0x7b, 0xee, 0x64, 0xc0, 0xaf, 0x56 };
+            byte[] vs = new byte[] { 0x01, 0x56, 0x3e, 0x3a, 0xb5, 0xd3, 0xd6, 0x76, 0x4c, 0x61, 0xef, 0xb9, 0x93, 0x02, 0xbd, 0x5b };
 
             TensionDev.ULID.Ulid ulid = new TensionDev.ULID.Ulid(vs);
             Assert.Equal(expectedULID, ulid.ToString());
@@ -53,7 +74,7 @@ namespace XUnitTestProjectULID
         public void TestConstructorInvalidCharacterString()
         {
             string vs = "01ARZ3NDEKTSU4RRFFQ69G5FAV";
-            FormatException  ex = Assert.Throws<FormatException>(() => { TensionDev.ULID.Ulid ulid = new TensionDev.ULID.Ulid(vs); });
+            FormatException ex = Assert.Throws<FormatException>(() => { TensionDev.ULID.Ulid ulid = new TensionDev.ULID.Ulid(vs); });
         }
 
         [Fact]
@@ -182,7 +203,7 @@ namespace XUnitTestProjectULID
         [Fact]
         public void TestToByteArray1()
         {
-            byte[] expected = new byte[] { 0x00, 0x55, 0x8f, 0x8e, 0xad, 0x74, 0xf5, 0x9d, 0x93, 0x18, 0x7b, 0xee, 0x64, 0xc0, 0xaf, 0x56 };
+            byte[] expected = new byte[] { 0x01, 0x56, 0x3e, 0x3a, 0xb5, 0xd3, 0xd6, 0x76, 0x4c, 0x61, 0xef, 0xb9, 0x93, 0x02, 0xbd, 0x5b };
             string vs = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
             TensionDev.ULID.Ulid ulid = new TensionDev.ULID.Ulid(vs);
 
@@ -193,7 +214,7 @@ namespace XUnitTestProjectULID
         [Fact]
         public void TestToByteArray2()
         {
-            byte[] expected = new byte[] { 0x00, 0x55, 0x8f, 0x8e, 0xad, 0x74, 0xf5, 0x9d, 0x93, 0x18, 0x7b, 0xee, 0x64, 0xc0, 0xaf, 0x56 };
+            byte[] expected = new byte[] { 0x01, 0x56, 0x3e, 0x3a, 0xb5, 0xd3, 0xd6, 0x76, 0x4c, 0x61, 0xef, 0xb9, 0x93, 0x02, 0xbd, 0x5b };
             TensionDev.ULID.Ulid ulid = new TensionDev.ULID.Ulid(expected);
 
             byte[] actual = ulid.ToByteArray();
@@ -204,7 +225,7 @@ namespace XUnitTestProjectULID
         public void TestToString1()
         {
             string expected = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
-            byte[] vs = new byte[] { 0x00, 0x55, 0x8f, 0x8e, 0xad, 0x74, 0xf5, 0x9d, 0x93, 0x18, 0x7b, 0xee, 0x64, 0xc0, 0xaf, 0x56 };
+            byte[] vs = new byte[] { 0x01, 0x56, 0x3e, 0x3a, 0xb5, 0xd3, 0xd6, 0x76, 0x4c, 0x61, 0xef, 0xb9, 0x93, 0x02, 0xbd, 0x5b };
             TensionDev.ULID.Ulid ulid = new TensionDev.ULID.Ulid(vs);
 
             string actual = ulid.ToString();
@@ -224,12 +245,35 @@ namespace XUnitTestProjectULID
         [Fact]
         public void TestToGuid1()
         {
-            Guid expected = new Guid("00558F8E-AD74-F59d-9318-7BEE64C0AF56");
+            Guid expected = new Guid("01563E3A-B5D3-D676-4C61-EFB99302BD5B");
             string vs = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
             TensionDev.ULID.Ulid ulid = new TensionDev.ULID.Ulid(vs);
 
             Guid actual = ulid.ToGuid();
             Assert.Equal(expected.ToString(), actual.ToString());
+        }
+
+        [Fact]
+        public void TestToDateTimeString()
+        {
+            DateTime expected = new DateTime(2016, 07, 30, 23, 54, 10, 259, DateTimeKind.Utc);
+
+            TensionDev.ULID.Ulid ulid = new TensionDev.ULID.Ulid("01ARZ3NDEKTSV4RRFFQ69G5FAV");
+            DateTime actual = ulid.ToDateTime();
+
+            Assert.Equal(expected, actual, TimeSpan.FromMilliseconds(1));
+        }
+
+        [Fact]
+        public void TestToDateTimeByteArray()
+        {
+            DateTime expected = new DateTime(2016, 07, 30, 23, 54, 10, 259, DateTimeKind.Utc);
+
+            byte[] vs = new byte[] { 0x01, 0x56, 0x3e, 0x3a, 0xb5, 0xd3, 0xd6, 0x76, 0x4c, 0x61, 0xef, 0xb9, 0x93, 0x02, 0xbd, 0x5b };
+            TensionDev.ULID.Ulid ulid = new TensionDev.ULID.Ulid(vs);
+            DateTime actual = ulid.ToDateTime();
+
+            Assert.Equal(expected, actual, TimeSpan.FromMilliseconds(1));
         }
 
         [Fact]

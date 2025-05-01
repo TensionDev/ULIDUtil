@@ -4,10 +4,13 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>TensionDev.ULID</AssemblyName>
     <RootNamespace>TensionDev.ULID</RootNamespace>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>TensionDev.ULID</PackageId>
-	<Version>0.1.1</Version>
+    <Version>0.2.0</Version>
     <Authors>TensionDev amsga</Authors>
     <Company>TensionDev</Company>
     <Product>TensionDev.ULID</Product>
@@ -18,7 +21,9 @@
     <RepositoryUrl>https://github.com/TensionDev/ULIDUtil</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>ULID</PackageTags>
-    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixed Date Time implementation.
+Fixed ToString implementation.
+Added DateTime Conversion from ULID.</PackageReleaseNotes>
     <NeutralLanguage>en-SG</NeutralLanguage>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
