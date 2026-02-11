@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <AssemblyName>TensionDev.ULID</AssemblyName>
     <RootNamespace>TensionDev.ULID</RootNamespace>
     <NuGetAuditMode>all</NuGetAuditMode>
@@ -10,12 +10,12 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>TensionDev.ULID</PackageId>
-    <Version>0.2.0</Version>
+    <Version>1.0.0</Version>
     <Authors>TensionDev amsga</Authors>
     <Company>TensionDev</Company>
     <Product>TensionDev.ULID</Product>
     <Description>A project to store various ULID functions within a library for future use.</Description>
-    <Copyright>Copyright (c) TensionDev 2021</Copyright>
+    <Copyright>Copyright (c) TensionDev 2021 - 2026</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/TensionDev/ULIDUtil</PackageProjectUrl>
     <RepositoryUrl>https://github.com/TensionDev/ULIDUtil</RepositoryUrl>

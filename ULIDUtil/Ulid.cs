@@ -1,6 +1,6 @@
 ﻿// SPDX-License-Identifier: Apache-2.0
 //
-//   Copyright 2021 TensionDev <TensionDev@outlook.com>
+//   Copyright 2021 - 2026 TensionDev <TensionDev@outlook.com>
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -25,8 +25,11 @@ namespace TensionDev.ULID
     /// </summary>
     public sealed class Ulid : IComparable<Ulid>, IEquatable<Ulid>
     {
+#if NETSTANDARD2_1_OR_GREATER
+        private static readonly DateTime s_epoch = DateTime.UnixEpoch;
+#else
         private static readonly DateTime s_epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
+#endif
         private const string INVALID_FORMAT_STRING = "The format of s is invalid";
         private readonly uint _time_high;
         private readonly ushort _time_low;
@@ -271,14 +274,20 @@ namespace TensionDev.ULID
         /// <summary>
         /// Converts the string representation of a Ulid to the equivalent Ulid object.
         /// </summary>
-        /// <param name="input">The Ulid to convert.</param>
+        /// <param name="input">A string representing the Ulid to convert. The string must be exactly 26 characters in
+        /// length.</param>
         /// <param name="result">The object that will contain the parsed value. If the method returns true, result contains a valid Ulid.
         /// If the method returns false, result equals Ulid.Empty.</param>
         /// <returns>true if the parse operation was successful; otherwise, false.</returns>
         public static bool TryParse(string input, out Ulid result)
         {
             bool vs = false;
-            result = new Ulid();
+            result = default;
+
+            if (input.Length != 26)
+            {
+                return vs;
+            }
 
             try
             {
@@ -292,6 +301,39 @@ namespace TensionDev.ULID
 
             return vs;
         }
+
+#if NETSTANDARD2_1_OR_GREATER
+        /// <summary>
+        /// Converts the specified character span into the equivalent Ulid object.
+        /// </summary>
+        /// <param name="input">A read-only span of characters representing the Ulid to convert. The span must be exactly 26 characters in
+        /// length.</param>
+        /// <param name="result">The object that will contain the parsed value. If the method returns true, result contains a valid Ulid.
+        /// If the method returns false, result equals Ulid.Empty.</param>
+        /// <returns>true if the parse operation was successful; otherwise, false.</returns>
+        public static bool TryParse(ReadOnlySpan<char> input, out Ulid result)
+        {
+            bool vs = false;
+            result = default;
+
+            if (input.Length != 26)
+            {
+                return vs;
+            }
+
+            try
+            {
+                result = Parse(input.ToString());
+                vs = true;
+            }
+            catch (Exception)
+            {
+                // Quietly suppress exception on Parse.
+            }
+
+            return vs;
+        }
+#endif
 
         /// <summary>
         /// Compares the current instance with another object and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
@@ -507,6 +549,29 @@ namespace TensionDev.ULID
             return s_epoch.ToUniversalTime() + timeSpan;
         }
 
+#if NETSTANDARD2_1_OR_GREATER
+        /// <summary>
+        /// Returns a character span representation of the value of this instance as per ulid/spec.
+        /// </summary>
+        /// <param name="destination">The span in which to write this instance's value formatted as a span of characters.</param>
+        /// <param name="charsWritten">When this method returns, contains the number of characters that were written in <paramref name="destination"/></param>
+        /// <returns>true if the format operation was successful; otherwise, false.</returns>
+        public bool TryFormat(Span<char> destination, out int charsWritten)
+        {
+            if (destination.Length < 26)
+            {
+                charsWritten = 0;
+                return false;
+            }
+
+            // Efficient encoding logic here
+            var str = this.ToString();
+            str.AsSpan().CopyTo(destination);
+            charsWritten = 26;
+            return true;
+        }
+#endif
+
         /// <summary>
         /// Indicates whether the values of two specified Ulid objects are equal.
         /// </summary>
@@ -651,6 +716,20 @@ namespace TensionDev.ULID
                 value = (UInt64)c - 58;
             else if (c >= 'V' && c <= 'Z')
                 value = (UInt64)c - 59;
+            else if (c >= 'a' && c <= 'h')
+                value = (UInt64)c - 87;
+            else if (c >= 'j' && c <= 'k')
+                value = (UInt64)c - 88;
+            else if (c >= 'm' && c <= 'n')
+                value = (UInt64)c - 89;
+            else if (c >= 'p' && c <= 't')
+                value = (UInt64)c - 90;
+            else if (c >= 'v' && c <= 'z')
+                value = (UInt64)c - 91;
+            else if (c == 'o' || c == 'O')
+                value = 0;
+            else if (c == 'i' || c == 'I' || c == 'l' || c == 'L')
+                value = 1;
             else
                 throw new FormatException(INVALID_FORMAT_STRING);
 

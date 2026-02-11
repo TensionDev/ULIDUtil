@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.0] - 2026-02-11
+[v1.0.0](https://github.com/TensionDev/ULIDUtil/releases/tag/v1.0.0)
+
+### Added
+- Added TryParse for character spans.
+- Added TryFormat for character spans.
+
+### Fixed
+- Fixed FromCrockfordBase32 to be case insensitive.
+- Fixed FromCrockfordBase32 to accept 'o', 'O', 'i', 'I', 'l', 'L'.
+
 
 ## [v0.2.0] - 2025-05-01
 [v0.2.0](https://github.com/TensionDev/ULIDUtil/releases/tag/v0.2.0)
