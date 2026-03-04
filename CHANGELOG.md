@@ -8,8 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Changed folder structure to match the TensionDev.ULID namespace.
+
+
 ## [v1.0.0] - 2026-02-11
-[v1.0.0](https://github.com/TensionDev/ULIDUtil/releases/tag/v1.0.0)
+[v1.0.0](https://github.com/TensionDev/ULID/releases/tag/v1.0.0)
 
 ### Added
 - Added TryParse for character spans.
@@ -21,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [v0.2.0] - 2025-05-01
-[v0.2.0](https://github.com/TensionDev/ULIDUtil/releases/tag/v0.2.0)
+[v0.2.0](https://github.com/TensionDev/ULID/releases/tag/v0.2.0)
 
 ### Added
 - Added DateTime Conversion from ULID.
@@ -32,14 +36,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [v0.1.1] - 2025-02-02 [YANKED]
-[v0.1.1](https://github.com/TensionDev/ULIDUtil/releases/tag/v0.1.1)
+[v0.1.1](https://github.com/TensionDev/ULID/releases/tag/v0.1.1)
 
 ### Changed
 - Changed Exception thrown message to a standardised string.
 
 
 ## [v0.1.0-alpha] - 2024-12-09
-[v0.1.0-alpha](https://github.com/TensionDev/ULIDUtil/releases/tag/v0.1.0-alpha)
+[v0.1.0-alpha](https://github.com/TensionDev/ULID/releases/tag/v0.1.0-alpha)
 
 ### Added
 - Added ULID generated based on current system date and time.

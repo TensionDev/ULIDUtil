@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace XUnitTestProjectULID
+namespace TensionDev.ULID.Tests
 {
     public class CrockfordBase32DecodeData : TheoryData<Char, UInt64>
     {
